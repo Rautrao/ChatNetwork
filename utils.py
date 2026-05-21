@@ -16,7 +16,7 @@ class Message(BaseModel):
     type: str
     status: Optional[str] = None  # "ok" / "error" (response only)
     message: Optional[str] = None  # human-readable
-    data: Optional[Dict[str, Any]] = None
+    data: Optional[Dict[str, Any]] = None # data contains list of dict
 
-    def to_dict(self):
+    def to_dict(self) :
         return self.model_dump(exclude_unset=True)
