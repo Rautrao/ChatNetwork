@@ -44,20 +44,20 @@ class ChatData:
         self.online_users = {}  # username -> socket
         self.chatrooms = {"lobby": []}  # room_name -> [user1, user2, ...]
         self.chatrooms["example"] = []  # for demo
-        self.lock = threading.RLock()
-
-        DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+pysqlite:///chatapp.db")
-        self.engine = create_engine(DATABASE_URL)
-        metadata_obj = MetaData()
+        self.lock = threading.RLock() # RLock() is Reentrant lock, basically this lock ensures only one thread has access to data
+                                     # same thread can acquire multiple locks
+        DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+pysqlite:///chatapp.db") # os.getenv(key,default)
+        self.engine = create_engine(DATABASE_URL) # central object managing database url
+        metadata_obj = MetaData() # this is 
         self.users = Table(
             "users",
             metadata_obj,
             Column("id", Integer, primary_key=True),
             Column("username", String, nullable=False),
             Column("password", String, nullable=False),
-            Column("salt", String, nullable=False),
+            Column("salt", String, nullable=False), # when there are same password salt makes different hashes for those.
         )
-        metadata_obj.create_all(self.engine)
+        metadata_obj.create_all(self.engine) # Create all tables defined in this metadata inside the database connected through this engine.
 
     def is_registered(self, username: str):
         stmt = self.users.select().where(self.users.c.username == username)
