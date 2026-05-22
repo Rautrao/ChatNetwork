@@ -91,7 +91,7 @@ class ChatData:
         try :
             self.online_users[username] = socket
         finally :
-            self.online_user.release() # lock is always released ,to prevent deadlocks
+            self.lock.release() # lock is always released ,to prevent deadlocks
 
     def logout(self, username, chatroom):
         with self.lock:
