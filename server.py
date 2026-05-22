@@ -59,7 +59,7 @@ class ChatData:
         )
         metadata_obj.create_all(self.engine) # Create all tables defined in this metadata inside the database connected through this engine.
 
-    def is_registered(self, username: str):
+    def is_registered(self, username: str) :
         stmt = self.users.select().where(self.users.c.username == username)
         with self.engine.connect() as conn:
             result = conn.execute(stmt).fetchone()
@@ -87,8 +87,11 @@ class ChatData:
             )
 
     def add_online_user(self, username, socket):
-        with self.lock:
+        self.lock.acquire()
+        try :
             self.online_users[username] = socket
+        finally :
+            self.online_user.release() # lock is always released ,to prevent deadlocks
 
     def logout(self, username, chatroom):
         with self.lock:
